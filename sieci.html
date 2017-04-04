@@ -1,0 +1,309 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Sieci</title>
+    <meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width = device-width, inital-scale = 1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+<body>
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">SieciSkrypt</a>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+		<div class="page-header">
+			<h1>Kalkulator IP</h1>
+			<h5>Korzystano z poradnika ze strony <code>strefacodera.pl</code></h5>
+		</div>
+		<div class="row" style="margin-bottom: 20px">
+			<div class="col-lg-12">
+				<div class="input-group input-group-lg">
+					<span class="input-group-btn">
+						<button class="btn btn-default" id="generate" type="button">Generuj!</button>
+					</span>
+					<input type="text" class="form-control" id="address" placeholder="Adres... (11.130.13.14/12)">
+			    </div><!-- /input-group -->
+			</div><!-- /.col-lg-6 --> 
+		</div><!-- /.row -->
+	<div id="hidden">
+	<div class="panel panel-default">
+	<div class="panel-heading">Krok 1</div>
+	  <div class="panel-body">
+		<p>Będziemy operować na <span id="oktet"></span> oktecie ponieważ jeden oktet to 8 bitów więc nie zmieścimy się w pierwszym (bo maska to <span id="maska"></span>) i musimy przejść do drugiego. <span id="maska"></span>-8 (maska – suma bitów oktetów pominiętych, bez tego na którym operujemy) = <span id="bity"></span>. Mamy więc <span id="bity"></span> bity na adres sieci, a reszta to adres hosta.</p>
+		<div class="panel panel-default">
+			<table id="baseip" class="table table-bordered table-striped">
+			<thead>
+			  <tr class="info">
+			    <th colspan="8">a</th>
+			    <th colspan="8">b</th>
+			    <th colspan="8">c</th>
+			    <th colspan="8">d</th>
+			  </tr>
+
+			 </thead>
+			 <tbody>
+				 <tr></tr>
+				 <tr id="desc"><td>Sieć</td><td>Host</td></tr>
+			 </tbody>
+			</table>
+		</div>
+	</div>
+	</div>
+	<div class="panel panel-default">
+	<div class="panel-heading">Krok 2</div>
+	  <div class="panel-body">	
+		<p>Rozpisujemy binarnie liczbę <span id="maska_ip"></span> z <span id="oktet"></span> oktetu (na ten oktet wskazuje maska):</p>
+
+		<div class="panel panel-default">
+			<table id="maskaip" class="table table-bordered table-striped">
+			<thead>
+			  <tr class="info">
+			    <th>128</th>
+			    <th>64</th>
+			    <th>32</th>
+			    <th>16</th>
+			    <th>8</th>
+			    <th>4</th>
+			    <th>2</th>
+			    <th>1</th>			    
+			  </tr>
+
+			 </thead>
+			 <tbody>
+				 <tr></tr>
+				 <tr id="desc"><td>Adres sieci</td><td>Adres hosta</td></tr>
+			 </tbody>
+			</table>
+		</div>
+		
+		<p>Sumujemy wagi z części należącej do adresu sieci mam więc: <span id="obliczenia"></span>. Pamiętamy, że operujemy na drugim oktecie więc adres sieci to: <span class="bg-success" id="adres_sieci"></span>. Po drugim oktecie (oktecie na którym operujemy według tego co wskazuje maska) czyli w trzecim i czwartym wstawiamy zera (zawsze po oktecie na którym operowaliśmy musimy wstawić zera).</p>
+
+	</div>
+	</div>
+	<div class="panel panel-default">
+	<div class="panel-heading">Krok 3</div>
+	  <div class="panel-body">	
+		<p>Wyznaczamy adres rozgłoszeniowy broadcast. W części po stronie hosta wpisujemy jedynki i sumujemy wszystkie wagi:</p>
+
+		<div class="panel panel-default">
+			<table id="broadcastip" class="table table-bordered table-striped">
+			<thead>
+			  <tr class="info">
+			    <th>128</th>
+			    <th>64</th>
+			    <th>32</th>
+			    <th>16</th>
+			    <th>8</th>
+			    <th>4</th>
+			    <th>2</th>
+			    <th>1</th>			    
+			  </tr>
+
+			 </thead>
+			 <tbody>
+				 <tr></tr>
+				 <tr></tr>
+				 <tr id="desc"><td>Adres sieci</td><td>Adres hosta</td></tr>
+			 </tbody>
+			</table>
+		</div>
+		<p>Suma wag (po stronie hosta i sieci (czerwone tło)): <span id="sumawag"></span></p>
+		<p>Adres broadcast: <span class="bg-success" id="adres_broadcast"></span> – w wyższych oktetach wstawiamy 255.</p>
+
+	</div>
+	</div>
+	<div class="panel panel-default">
+	<div class="panel-heading">Krok 4</div>
+	  <div class="panel-body">	
+		<div class="well well-sm">
+			<h4>Wyznaczanie adresu najmniejszego hosta.</h4>
+			<p>Aby wyznaczyć adres najmniejszego hosta, trzeba dodać 1 do końcówki adresu:</p>
+			<span id="najm_host" class="bg-info"></span>
+		</div>
+		<div class="well well-sm">
+		<h4>Wyznaczanie adresu największego hosta.</h4>
+		<p>Aby wyznaczyć adres największego hosta, trzeba odjąć 1 od końcówki adresu:</p>
+		<span id="najw_host" class="bg-info"></span>		
+		</div>
+
+		<div class="well well-sm">
+		<h4>Zakres adresu hostów.</h4>
+		<p>Zakres = [adres najmniejszego hosta do adres największego hosta]</p>
+		<span id="zakres" class="bg-warning"></span>
+		</div>
+		</div>
+	</div>
+	</div>
+</div>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script>
+	$( "#hidden" ).hide();
+		function toBinary( dec ){
+			binary = (parseInt( dec ) >>> 0).toString(2);
+			missingZeros = 9-binary.length;
+
+			if( missingZeros > 0 )
+				binary = Array(missingZeros).join("0")+binary;
+
+			return binary;
+		}
+		$( "#generate" ).click(function() {
+			$( "#generate" ).prop('disabled', true);
+
+			//sprawdzanie idiotów
+			tmp = $( "#address" ).val();
+
+			if( (tmp.match(/./g) || []).length != 4 || tmp.search( "/" ) == -1 ){
+				$( "#address" ).val( "Jesteś idiotą" );
+				return;
+			}
+
+			var str = $( "#address" ).val().split( '/' );
+			var maska = parseInt( str[ 1 ] );
+			var adres = str[ 0 ].trim().split( '.' );
+			maskaCount = 0;
+			for( var i = 0;i < adres.length;i++ ){
+				binary = toBinary( adres[ i ] );
+
+				$( "#baseip thead th:eq(" + (i) + ")" ).text( adres[ i ] );
+
+				toAppend = "";
+
+
+				for( var j = 0;j < 8;j++ )
+				{
+					maskaCount++;
+					if( maskaCount > maska )
+						toAppend += "<td class=\"danger\">" + binary[ j ] + "</td>";
+					else	
+						toAppend += "<td>" + binary[ j ] + "</td>";
+				}
+
+				$( "#baseip tbody tr:eq(0)" ).append( toAppend );
+			}
+
+			$( "#baseip #desc td:eq(0)" ).attr( "colspan", maska );
+			$( "#baseip #desc td:eq(1)" ).attr( "colspan", maskaCount );
+
+			//# KROK 2 ################################################//
+
+			oktet = parseInt( maska / 8 )+1;
+			maska_ip = adres[ oktet-1 ];
+			maska_bin = toBinary( adres[ oktet-1 ] );
+			bity = maska-(oktet-1)*8;
+
+			console.log( oktet );
+
+			$( '[id="oktet"]' ).text( oktet );
+			$( '[id="maska"]' ).text( maska );
+			$( '[id="bity"]' ).text( bity );
+
+			$( '[id="maska_ip"]' ).text( maska_ip );
+
+			toAppend = "";
+			for( var i = 0;i < 8;i++ ){
+				if( i < bity )
+					toAppend += "<td class=\"danger\">"+maska_bin[ i ]+"</td>";
+				else
+					toAppend += "<td>"+maska_bin[ i ]+"</td>";
+			}
+
+			$( "#maskaip tbody tr:eq(0), #broadcastip tbody tr:eq(0)" ).append( toAppend );
+			$( "#maskaip #desc td:eq(0), #broadcastip #desc td:eq(0)" ).attr( "colspan", bity );
+			$( "#maskaip #desc td:eq(1), #broadcastip #desc td:eq(1)" ).attr( "colspan", 8-bity );
+
+			obliczenia = "";
+			wynik_maski = 0;
+
+			for( var i = 0;i < bity;i++ ){
+				wynik_maski += Math.pow(2,7-i) * parseInt(maska_bin[ i ]);
+
+				obliczenia += Math.pow(2,7-i) + " * " + maska_bin[ i ] + (i+1!=bity?" + ":" = "); 
+				console.log( obliczenia );
+			}
+			obliczenia += wynik_maski;
+			$( '[id="obliczenia"]' ).text( obliczenia );
+
+			adres_sieci_arr = new Array(4).fill(0);
+
+			adres_sieci_arr[ oktet-1 ] = wynik_maski;
+			for( var i = 0;i < oktet-1;i++ )
+				adres_sieci_arr[ i ] = adres[ i ];
+
+			adres_sieci = adres_sieci_arr.join(".");
+
+
+			$( '[id="adres_sieci"]' ).text( adres_sieci );
+
+			//# KROK 3 ################################################//
+
+
+			/*
+				Liczenie liczby adresu broadcast
+			*/
+
+			wynik_broadcast = 0;
+			obliczenia = "";
+
+			toAppend = "";
+			for( var i = 0;i < 8;i++ )
+			{
+				if( i < bity ){
+					toAppend += "<td></td>";
+					if( parseInt( maska_bin[ i ] ) ){
+						obliczenia += Math.pow(2,7-i);
+					}
+					else continue;
+				}
+				else{
+					toAppend += "<td>1</td>";
+					obliczenia += Math.pow(2, 7-i );
+					wynik_broadcast += Math.pow(2, 7-i );
+				} 
+				if( i != 7 ) obliczenia += " + ";
+			}
+
+			wynik_broadcast += wynik_maski;
+			obliczenia += " = " + wynik_broadcast;
+			$( "#broadcastip tbody tr:eq(1)" ).append( toAppend );
+
+			$( '[id="sumawag"]' ).text( obliczenia );
+
+			/*
+				Formatowanie adresu Broadcast
+			*/
+			adres_broadcast_arr = new Array(4).fill(255);
+
+			adres_broadcast_arr[ oktet-1 ] = wynik_broadcast;
+			for( var i = 0;i < oktet-1;i++ )
+				adres_broadcast_arr[ i ] = adres[ i ];
+
+			adres_broadcast = adres_broadcast_arr.join(".");
+			$( '[id="adres_broadcast"]' ).text( adres_broadcast );		
+
+
+			//# KROK 4 ################################################//	
+			najm_host = adres_sieci_arr;
+			najm_host[ 3 ] += 1;
+
+			$( '[id="najm_host"]').text( adres_sieci + " + 1 = " + najm_host.join(".") );
+
+			najw_host = adres_broadcast_arr;
+			najw_host[ 3 ] -= 1;
+
+			$( '[id="najw_host"]').text( adres_broadcast + " - 1 = " + najw_host.join(".") );	
+
+			$( '[id="zakres"]').text( najm_host.join(".") + " - " + najw_host.join(".") );
+			$( "#hidden" ).show();
+		});
+	</script>
+	</body>
+</html>
